@@ -1,4 +1,0 @@
-﻿  future_thread_pool.cpp
-c:\users\wzh\desktop\practice\practice\future_thread_pool.cpp(55): warning C4018: “<”: 有符号/无符号不匹配
-c:\users\wzh\desktop\practice\practice\future_thread_pool.cpp(74): warning C4018: “<”: 有符号/无符号不匹配
-  practice.vcxproj -> C:\Users\wzh\Desktop\practice\Debug\practice.exe
