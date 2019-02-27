@@ -39,7 +39,7 @@ private:
 class future_thread_pool
 {
 public:
-	future_thread_pool(int thread_max_num = 4, int queue_max_size = 100, long long max_wait_time = 500);
+	future_thread_pool(int thread_max_num = 12, int queue_max_size = 1000, long long max_wait_time = 1000);
 	virtual ~future_thread_pool();
 
 	std::future<ret_val> insert_task(std::function<ret_val()>);
@@ -60,6 +60,9 @@ private:
 	std::condition_variable _condition;
 
 	long long _max_wait_time;
+	time_stamp start;
+	time_stamp end;
+	std::unique_lock<std::mutex> _condition_lock;
 
 
 	void work();

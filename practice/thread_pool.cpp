@@ -39,7 +39,8 @@ thread_pool::thread_pool(int num)
 
 void thread_pool::work(int thread_num)
 {
-	std::unique_lock <std::mutex> lock(m1);
+	//!!!!!!!!!!!!!!!!!!!!!!!! wrong
+	//std::unique_lock <std::mutex> lock(m1);
 	while (1)
 	{
 		m2.lock();
@@ -58,7 +59,7 @@ void thread_pool::work(int thread_num)
 		{
 			m2.unlock();
 			thread_status[thread_num] = BLOCKING;
-			cond_var.wait(lock);
+			//cond_var.wait(lock);
 			thread_status[thread_num] = READY;
 		}
 	}

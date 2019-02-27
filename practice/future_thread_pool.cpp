@@ -17,17 +17,22 @@ future_thread_pool::future_thread_pool(int thread_max_num , int queue_max_size, 
 		_thread_array.push_back(work_thread);
 		_threads_status[i] = HOLDING;
 	}
+	start = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now());
 }
 
 void future_thread_pool::work()
 {
-	std::unique_lock<std::mutex> _condition_lock(_condition_mutex);
 	while (!_control_flag)
 	{
+		//std::cout << std::this_thread::get_id() << std::endl;
+		
 		while (_empty_flag)
 		{
+			std::unique_lock<std::mutex> _condition_lock = std::unique_lock<std::mutex>(_condition_mutex);
 			_condition.wait(_condition_lock);
-		}		
+		}
+		
+		
 		_task_queue_mutex.lock();
 		if (_task_queue.size() > 0)
 		{
@@ -42,7 +47,17 @@ void future_thread_pool::work()
 			if (_tp.time_since_epoch().count() - _insert_time.time_since_epoch().count() <= _max_wait_time)
 			{
 				//std::cout<< "wait_time: "<< _tp.time_since_epoch().count() - _insert_time.time_since_epoch().count() << std::endl;
+				//std::cout << std::this_thread::get_id() <<" task_queue size: " << _task_queue.size() << std::endl;
 				_task();
+
+				//test
+				_task_queue_mutex.lock();
+				if (_task_queue.size() == 0)
+				{
+					end = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now());
+					std::cout << end.time_since_epoch().count() - start.time_since_epoch().count() << "ms" << std::endl;
+				}
+				_task_queue_mutex.unlock();
 			}
 			else
 			{
@@ -63,7 +78,7 @@ std::future<ret_val> future_thread_pool::insert_task(std::function<ret_val()> fu
 	std::packaged_task<ret_val()> p_task(func);
 	std::future<ret_val> ret = p_task.get_future();
 	_task_queue_mutex.lock();
-	std::cout << "insert a tast  task_queue size: " << _task_queue.size()<< std::endl;
+	//std::cout << "insert a tast  task_queue size: " << _task_queue.size()<< std::endl;
 	if (_task_queue.size() < _queue_size)
 	{
 		time_stamp tp = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now());
@@ -120,7 +135,7 @@ ret_val future_task::do_sth()
 {
 	int tmp = 0;
 	//test of performance
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 500000; i++)
 	{
 		tmp++;
 	}

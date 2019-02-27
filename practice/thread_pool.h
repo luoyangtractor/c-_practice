@@ -45,5 +45,7 @@ private:
 	std::atomic<int*> thread_status;
 	std::vector<std::thread *> pool;
 	std::queue<task> task_queue;
+
+	std::unique_lock<std::mutex> _condition_lock;
 };
 
