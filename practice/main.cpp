@@ -33,6 +33,11 @@ void test_future_thread_pool()
 	{
 		for (int i = 0; i < 1000; i++)
 		{
+			int tmp = 0;
+			for (int j = 0; j < 3000; j++)
+			{
+				tmp++;
+			}
 			future_task t;
 			std::function<ret_val()> func = std::bind(&future_task::do_sth, &t);
 			std::future<ret_val> ret = pool.insert_task(func);
